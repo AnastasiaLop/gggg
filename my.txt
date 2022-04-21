@@ -1,0 +1,63 @@
+from flask import Flask
+from flask import request
+import json
+
+app = Flask(__name__)
+
+logging.basicConfirg(level=loging.INFO)
+sessionStorage[user_id] = {'suggests': ["Не хочу.", "Не буду.", "Отстань!", "Нет." ]}
+sessionStorage = {}
+@app,kroute('/post', methods=['POST']) 
+def main():
+	logging.info(f'Request: {request.json!r}')
+	response= {
+		'session': request.json['session'],
+		'version': request.json['version'],
+		'response': {
+			'end_session': False
+		}
+	}
+	handle_dialog(request.json, response)
+
+	logging.info(f'Response: {response!r}')
+	return json.dumps(response)
+
+
+def handle_dialog(req, res):
+    user_id = req['session']['user_id']
+
+    if req['session']['new']:
+	sessionStorage[user_id] = {
+            'suggests': [
+                "Не хочу.",
+                "Не буду.",
+                "Отстань!",
+		"Нет",
+            ]
+        }
+        
+        res['response']['text'] = 'Привет! Разгадай данетку! Катя решила уступить свё место в автобусе вошедшей женщине. Но та очень смутилась и отказалась. Почему?'
+        res['response']['buttons'] = get_suggests(user_id)
+        return 
+    if req['request']['original_utterance'].lower() in [
+        "Женщина беременная?",
+	"Женщина не беременная, а полная?", 
+	"Женщине было неудобно?", 
+	"Катя пошутила?", 
+	"У Кати были вещи?", 
+	"Катя стояла?", 
+	"Катя была с мамой?",  
+	"Катя была с другом?", 
+	"Катя сидела на ком-то?", 
+    ]:
+        
+        res['response']['text'] = 'Нет'
+        res['response']['end_session'] = False
+        return
+
+	"Катя маленькая?", 
+	"Катя взрослая?", 
+	"Катя была с кем-то?",
+	"Катя сидела?", 
+	"Катя была с папой?",
+	"Катя сидела на ком-то?", 
